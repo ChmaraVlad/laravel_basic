@@ -1,9 +1,10 @@
 Project Setup Guide
 Follow the steps below to set up and run the project.
 
-1. Fill in the empty .env variables
+1. Create .env files and fill them with values
 Inside the /docker folder
 Inside the /projects folder
+Refer to the example files in these directories and update them with your own values.
 
 2. Fill in the configuration files
 docker/server/00-php.ini
