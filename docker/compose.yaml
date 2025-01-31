@@ -1,0 +1,62 @@
+version: '3'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/server.dockerfile
+      args:
+        PHP_VERSION_ARG: ${PHP_VERSION:-8.3}
+    container_name: server
+    hostname: ${SERVER_HOSTNAME:-laravel.loc}
+    working_dir: /var/www/html
+    volumes:
+      - ../project:/var/www/html
+      - ./server/sites-available:/etc/apache2/sites-available
+      - ./server/php/00-php.ini:/etc/php/${PHP_VERSION:-8.3}/apache2/conf.d/00-php.ini
+    ports:
+      - ${SERVER_HTTP_PORT:-80}:80
+      - ${SERVER_HTTPS_PORT:-443}:443
+    networks:
+      - default
+
+  mysql:
+    image: mariadb:10.5.9
+    command: [ "--max-allowed-packet=512M" ]
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-laravel}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./mysql/storage:/var/lib/mysql:delegated
+      - ./mysql/conf:/etc/mysql/conf.d
+    networks:
+      - default
+
+  phpmyadmin:
+    image: bitnami/phpmyadmin:5.2.0-debian-11-r43
+    ports:
+      - ${PHPMYADMIN_HTTP_PORT:-8081}:8443
+    environment:
+      DATABASE_HOST: mysql
+    networks:
+      - default
+
+  node:
+    image: node:${NODE_VERSION:-20.16.0}-alpine${NODE_ALPINE_VERSION:-3.20}
+    container_name: node
+    tty: true
+    working_dir: /var/www/html
+    volumes:
+      - ../project:/var/www/html
+    ports:
+      - ${NODE_WEBSOCKET_PORT:-3000}:3000
+    command: npm run start
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge

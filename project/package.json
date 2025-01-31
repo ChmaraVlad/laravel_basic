@@ -1,0 +1,24 @@
+{
+    "name": "node.server",
+    "version": "1.0.0",
+    "main": "node.server.js",
+    "scripts": {
+        "build": "vite build",
+        "start": "npm i && node node.server.js",
+        "dev": "vite"
+    },
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "autoprefixer": "^10.4.20",
+        "axios": "^1.7.4",
+        "concurrently": "^9.0.1",
+        "laravel-vite-plugin": "^1.2.0",
+        "postcss": "^8.4.47",
+        "tailwindcss": "^3.4.13",
+        "vite": "^6.0.11",
+        "node-env-file": "0.1.8",
+        "express": "4.19.2"
+    }
+}
