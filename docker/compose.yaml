@@ -6,27 +6,60 @@ services:
       dockerfile: ./dockerfiles/server.dockerfile
       args:
         PHP_VERSION_ARG: ${PHP_VERSION:-8.3}
+        OS_VERSION_ARG: ${OS_VERSION:-22.04}
+    tty: true
+    working_dir: /var/www/html
     container_name: server
-    hostname: ${SERVER_HOSTNAME:-laravel.loc}
+    volumes:
+      - ../project:/var/www/html
+      - ./server/php/00-php.ini:/etc/php/${PHP_VERSION:-8.3}/fpm/conf.d/00-php.ini
+    networks:
+      - default
+
+  fpm:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/fpm.dockerfile
+      args:
+        PHP_VERSION_ARG: ${PHP_VERSION:-8.3}
+    image: projects-fpm/php
+    tty: true
+    container_name: fpm
+    restart: unless-stopped
     working_dir: /var/www/html
     volumes:
       - ../project:/var/www/html
-      - ./server/sites-available:/etc/apache2/sites-available
-      - ./server/php/00-php.ini:/etc/php/${PHP_VERSION:-8.3}/apache2/conf.d/00-php.ini
+      - ./fpm/fpm.conf:/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+    networks:
+      - default
+
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
     ports:
       - ${SERVER_HTTP_PORT:-80}:80
       - ${SERVER_HTTPS_PORT:-443}:443
+    tty: true
+    volumes:
+      - ../project:/var/www/html
+      - ./webserver:/etc/nginx/conf.d
+#      - ./server/ssl:/etc/nginx/ssl
+    depends_on:
+      - server
     networks:
       - default
+
 
   mysql:
     image: mariadb:10.5.9
     command: [ "--max-allowed-packet=512M" ]
     ports:
       - "3306:3306"
+    container_name: mysql
+    tty: true
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-laravel}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-my_project}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
@@ -37,6 +70,7 @@ services:
 
   phpmyadmin:
     image: bitnami/phpmyadmin:5.2.0-debian-11-r43
+    tty: true
     ports:
       - ${PHPMYADMIN_HTTP_PORT:-8081}:8443
     environment:

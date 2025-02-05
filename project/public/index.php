@@ -1,5 +1,8 @@
 <?php
 
+//phpinfo(); die;
+//echo 123; die;
+
 use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
