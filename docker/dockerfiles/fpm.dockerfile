@@ -1,65 +1,25 @@
-# ----------------------
-# GLOBAL ARGS
-# ----------------------
-
-# set ubuntu version
 ARG PHP_VERSION_ARG
-
-# ----------------------
-# MAIN
-# ----------------------
 
 FROM php:${PHP_VERSION_ARG}-fpm
 
-# ----------------------
-# MAIN ARGS
-# ----------------------
-
 ARG DEBIAN_FRONTEND=noninteractive
 
-ARG SYSTEM_USER_ARG
-ARG SYSTEM_USER_GROUP_ARG
+ARG PHP_VERSION_ARG
 
-# ----------------------
-# MAIN ENVS
-# ----------------------
-
-ENV LC_ALL=C.UTF-8
-
-ENV TZ=Etc/UTC
-
-ENV PHP_VERSION_ENV=$PHP_VERSION_ARG
-
-# ----------------------
-# MAIN ARGS
-# ----------------------
-
-# update and install system software
+ENV PHP_VERSION=$PHP_VERSION_ARG
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install build-essential locales curl sudo bash -y
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-#RUN #apt-get install -y --no-install-recommends \
-#    php${PHP_VERSION_ENV}-pdo \
-#    php${PHP_VERSION_ENV}-mysql \
-#    php${PHP_VERSION_ENV}-mysqli \
-#    php${PHP_VERSION_ENV}-sqlite
-
-# add user for docker instanse
-# add user for docker instanse
-RUN groupadd -g 1000 $SYSTEM_USER_GROUP_ARG
-RUN useradd -u 1000 -ms /bin/bash -g $SYSTEM_USER_GROUP_ARG $SYSTEM_USER_ARG
-
-# ----------------------
-# MAIN RESETS
-# ----------------------
+RUN usermod -u 1000 www-data
+RUN echo 'www-data ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
 RUN apt autoremove
 
 ARG DEBIAN_FRONTEND=interactive
 
-# ----------------------
-
-USER $SYSTEM_USER_ARG
+USER www-data
 
 EXPOSE 9000
 

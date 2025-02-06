@@ -22,11 +22,16 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 /auth.json
-/.fleet
-/.idea
-/.nova
-/.vscode
-/.zed
+.fleet
+.idea
+.nova
+.vscode
+.zed
 
 /composer.lock
 /package-lock.json
+
+.bash_history
+.cache
+.config
+.local
