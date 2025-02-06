@@ -2,5 +2,7 @@
 
 mysql/storage/*
 
-server/php/00-php.ini
-server/sites-available/000-default.conf
+php/00-php.ini
+webserver/default.conf
+mysql/conf/my.conf
+fpm/fpm.conf

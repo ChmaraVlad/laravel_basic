@@ -1,18 +1,21 @@
 version: '3'
 services:
-  server:
+  app:
     build:
       context: .
       dockerfile: ./dockerfiles/server.dockerfile
       args:
-        PHP_VERSION_ARG: ${PHP_VERSION:-8.3}
-        OS_VERSION_ARG: ${OS_VERSION:-22.04}
+        PHP_VERSION_ARG: ${PHP_VERSION:-8.4}
+    image: basic-app/php
+    container_name: app
+    working_dir: /var/www
     tty: true
-    working_dir: /var/www/html
-    container_name: server
+    environment:
+      LC_ALL: ${LC_ALL}
+      TZ: ${TZ}
     volumes:
-      - ../project:/var/www/html
-      - ./server/php/00-php.ini:/etc/php/${PHP_VERSION:-8.3}/fpm/conf.d/00-php.ini
+      - ../project:/var/www
+      - ./php/00-php.ini:/etc/php/${PHP_VERSION:-8.4}/cli/conf.d/00-php.ini
     networks:
       - default
 
@@ -21,15 +24,18 @@ services:
       context: .
       dockerfile: ./dockerfiles/fpm.dockerfile
       args:
-        PHP_VERSION_ARG: ${PHP_VERSION:-8.3}
-    image: projects-fpm/php
-    tty: true
+        PHP_VERSION_ARG: ${PHP_VERSION:-8.4}
+    image: basic-fpm/php
     container_name: fpm
-    restart: unless-stopped
-    working_dir: /var/www/html
+    working_dir: /var/www
+    tty: true
+    environment:
+      LC_ALL: ${LC_ALL}
+      TZ: ${TZ}
     volumes:
-      - ../project:/var/www/html
-      - ./fpm/fpm.conf:/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+      - ../project:/var/www
+      - ./fpm/fpm.conf:/etc/php/${PHP_VERSION:-8.4}/fpm/pool.d/www.conf
+      - ./fpm/00-php.ini:/usr/local/etc/php/conf.d/00-php.ini
     networks:
       - default
 
@@ -41,20 +47,14 @@ services:
       - ${SERVER_HTTPS_PORT:-443}:443
     tty: true
     volumes:
-      - ../project:/var/www/html
+      - ../project:/var/www
       - ./webserver:/etc/nginx/conf.d
-#      - ./server/ssl:/etc/nginx/ssl
-    depends_on:
-      - server
     networks:
       - default
-
 
   mysql:
     image: mariadb:10.5.9
     command: [ "--max-allowed-packet=512M" ]
-    ports:
-      - "3306:3306"
     container_name: mysql
     tty: true
     environment:
@@ -82,9 +82,9 @@ services:
     image: node:${NODE_VERSION:-20.16.0}-alpine${NODE_ALPINE_VERSION:-3.20}
     container_name: node
     tty: true
-    working_dir: /var/www/html
+    working_dir: /var/www
     volumes:
-      - ../project:/var/www/html
+      - ../project:/var/www
     ports:
       - ${NODE_WEBSOCKET_PORT:-3000}:3000
     command: npm run start
