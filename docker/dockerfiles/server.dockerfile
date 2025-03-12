@@ -12,7 +12,9 @@ RUN apt-get update
 RUN apt-get install -y \
     sudo \
     software-properties-common \
-    unzip
+    unzip \
+    snapd \
+    bash
 
 RUN add-apt-repository -y ppa:ondrej/php && apt-get update
 

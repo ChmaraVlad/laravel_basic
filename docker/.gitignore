@@ -3,6 +3,9 @@
 mysql/storage/*
 
 php/00-php.ini
-webserver/default.conf
+
+server/default.conf
+server/ssl/*
 mysql/conf/my.conf
+
 fpm/fpm.conf

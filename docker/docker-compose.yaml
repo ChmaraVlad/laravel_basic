@@ -39,16 +39,17 @@ services:
     networks:
       - default
 
-  webserver:
+  server:
     image: nginx:alpine
-    container_name: webserver
+    container_name: server
     ports:
       - ${SERVER_HTTP_PORT:-80}:80
       - ${SERVER_HTTPS_PORT:-443}:443
     tty: true
     volumes:
       - ../project:/var/www
-      - ./webserver:/etc/nginx/conf.d
+      - ./server:/etc/nginx/conf.d
+      - ./server/ssl:/var/www/certs:ro
     networks:
       - default
 
@@ -85,6 +86,7 @@ services:
     working_dir: /var/www
     volumes:
       - ../project:/var/www
+      - ./server/ssl:/var/www/certs:ro
     ports:
       - ${NODE_WEBSOCKET_PORT:-3000}:3000
     command: npm run start
