@@ -1,12 +1,11 @@
 server {
-    #listen 80;
     listen 443;
 
-    server_name casino.loc;
+    server_name laravel.loc;
 
     ssl on;
-    ssl_certificate /var/www/certs/casino.loc+3.pem;
-    ssl_certificate_key /var/www/certs/casino.loc+3-key.pem;
+    ssl_certificate /var/www/certs/cert.pem;
+    ssl_certificate_key /var/www/certs/key.pem;
 
     index index.php index.html;
     error_log  /var/log/nginx/error.log;
@@ -33,7 +32,7 @@ server {
     listen 80;
     listen [::]:80;
 
-    server_name casino.loc;
+    server_name laravel.loc;
 
     return 302 https://$server_name$request_uri;
 }

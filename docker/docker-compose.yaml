@@ -49,7 +49,7 @@ services:
     volumes:
       - ../project:/var/www
       - ./server:/etc/nginx/conf.d
-      - ./server/ssl:/var/www/certs:ro
+      - ./server/ssl:/var/www/certs
     networks:
       - default
 
@@ -86,7 +86,7 @@ services:
     working_dir: /var/www
     volumes:
       - ../project:/var/www
-      - ./server/ssl:/var/www/certs:ro
+      - ./server/ssl:/var/www/certs
     ports:
       - ${NODE_WEBSOCKET_PORT:-3000}:3000
     command: npm run start
