@@ -1,30 +1,28 @@
-const express = require('express');
-const env = require('node-env-file');
-const fs = require('node:fs');
+import express from 'express';
+import factory from 'https';
+
+import env from  'node-env-file';
+import fs from 'node:fs';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 env(__dirname + '/.env');
 
 const port = process.env.NODE_PORT;
 
-const PROTOCOLS = {
-    HTTP : 'http',
-    HTTPS: 'https'
-};
-
 function createServer()
 {
-    let protocol = PROTOCOLS.HTTP
-    let params = [];
+    const params = [];
 
-    if (process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH) {
-        protocol = PROTOCOLS.HTTPS;
-        params.push({
-            key : fs.readFileSync(process.env.SSL_KEY_PATH),
-            cert: fs.readFileSync(process.env.SSL_CERT_PATH),
-        });
-    }
+   params.push({
+        key : fs.readFileSync(process.env.SSL_KEY_PATH),
+        cert: fs.readFileSync(process.env.SSL_CERT_PATH),
+    });
 
-    const factory = require(protocol);
     const app = express();
 
     params.push(app);
