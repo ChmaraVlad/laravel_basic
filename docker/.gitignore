@@ -1,11 +1,9 @@
-.env
-
 mysql/storage/*
 
 php/00-php.ini
 
-server/default.conf
-server/ssl/*
+webserver/default.conf
+webserver/ssl/*
 mysql/conf/my.conf
 
 fpm/fpm.conf
