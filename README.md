@@ -64,7 +64,10 @@ docker compose up --build -d
 ```
 cd $PROJECT_DIR/laravel/docker/server/ssl
 sudo apt install libnss3-tools
-brew install mkcert
+
+git clone https://github.com/FiloSottile/mkcert && cd mkcert
+go build -ldflags "-X main.Version=$(git describe --tags)"
+
 mkcert -install
 mkcert laravel.loc
 sudo sh -c 'echo "127.0.0.1 laravel.loc" >> /etc/hosts'
@@ -78,7 +81,10 @@ mv laravel.loc+5-key.pem key.pem
 
 ```
 cd $PROJECT_DIR/laravel/docker/server/ssl
-choco install mkcert
+
+git clone https://github.com/FiloSottile/mkcert && cd mkcert
+go build -ldflags "-X main.Version=$(git describe --tags)"
+
 mkcert -install
 mkcert laravel.loc
 Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "127.0.0.1 laravel.loc"
