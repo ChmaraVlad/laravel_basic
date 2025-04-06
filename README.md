@@ -63,7 +63,7 @@ docker compose up --build -d
 
 ```
 cd $PROJECT_DIR/laravel/docker/server/ssl
-sudo apt install libnss3-tools
+sudo apt install libnss3-tools golang-go
 
 git clone https://github.com/FiloSottile/mkcert && cd mkcert
 go build -ldflags "-X main.Version=$(git describe --tags)"
@@ -82,8 +82,15 @@ mv laravel.loc+5-key.pem key.pem
 ```
 cd $PROJECT_DIR/laravel/docker/server/ssl
 
-git clone https://github.com/FiloSottile/mkcert && cd mkcert
-go build -ldflags "-X main.Version=$(git describe --tags)"
+#use Chocolatey
+iwr -useb chocolatey.org/install.ps1 | iex
+choco install mkcert
+
+#or use Scoop
+
+iwr -useb get.scoop.sh | iex
+scoop bucket add extras
+scoop install mkcert
 
 mkcert -install
 mkcert laravel.loc
