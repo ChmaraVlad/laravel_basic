@@ -82,15 +82,8 @@ mv laravel.loc+5-key.pem key.pem
 ```
 cd $PROJECT_DIR/laravel/docker/server/ssl
 
-#use Chocolatey
 iwr -useb chocolatey.org/install.ps1 | iex
 choco install mkcert
-
-#or use Scoop
-
-iwr -useb get.scoop.sh | iex
-scoop bucket add extras
-scoop install mkcert
 
 mkcert -install
 mkcert laravel.loc
