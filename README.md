@@ -62,7 +62,7 @@ docker compose up --build -d
 </small>
 
 ```
-cd $PROJECT_DIR/laravel/docker/server/ssl
+cd $PROJECT_DIR/laravel/docker/webserver/ssl
 sudo apt install libnss3-tools golang-go
 
 git clone https://github.com/FiloSottile/mkcert && cd mkcert
@@ -70,26 +70,33 @@ go build -ldflags "-X main.Version=$(git describe --tags)"
 
 mkcert -install
 mkcert laravel.loc
-sudo sh -c 'echo "127.0.0.1 laravel.loc" >> /etc/hosts'
+
 mv laravel.loc+5.pem cert.pem
 mv laravel.loc+5-key.pem key.pem
+
+sudo sh -c 'echo "127.0.0.1 laravel.loc" >> /etc/hosts'
 ```
 
 <small>
     <i>WINDOWS</i>
 </small>
 
+Use `Win + X` hotkey and choose `Windows PowerShell for administrators` in opened menu
+
 ```
-cd $PROJECT_DIR/laravel/docker/server/ssl
+cd $PROJECT_DIR/laravel/docker/webserver/ssl
 
-iwr -useb chocolatey.org/install.ps1 | iex
-choco install mkcert
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-mkcert -install
+irm get.scoop.sh | iex
+scoop bucket add extras
+scoop install mkcert
+
 mkcert laravel.loc
+ren laravel.loc.pem cert.pem
+ren laravel.loc-key.pem key.pem
+
 Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "127.0.0.1 laravel.loc"
-ren laravel.loc+5.pem cert.pem
-ren laravel.loc+5-key.pem key.pem
 ```
 
 ##### PHP app
