@@ -82,8 +82,9 @@ mv laravel.loc+5-key.pem key.pem
 ```
 cd $PROJECT_DIR/laravel/docker/server/ssl
 
-iwr -useb chocolatey.org/install.ps1 | iex
-choco install mkcert
+Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+scoop install mkcert
 
 mkcert -install
 mkcert laravel.loc
